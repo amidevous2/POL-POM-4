@@ -47,7 +47,7 @@ if os.environ["POL_OS"] == "Linux":
     os.environ["POL_USER_ROOT"] = os.environ["HOME"]+"/.PlayOnLinux/"
     os.environ["APPLICATION_TITLE"] = "PlayOnLinux"
     os.environ["POL_DNS"] = "playonlinux.com"
-    os.environ["WINE_SITE"] = "https://phoenicis.playonlinux.com/index.php/wine?os=linux"
+    os.environ["WINE_SITE"] = "https://raw.githubusercontent.com/amidevous2/POL-POM-4/refs/heads/master/V4_data/repository/winelinux.json"
     if playonlinux.VersionLower(wx.VERSION_STRING, "3.0.0"):
         windows_add_size = 0
         windows_add_playonmac = 0

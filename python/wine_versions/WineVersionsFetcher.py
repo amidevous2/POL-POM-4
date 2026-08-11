@@ -17,7 +17,7 @@ class WineVersionFetcher():
         thread.start()
 
     def _sync_fetch_all_available_wine_versions(self, callback, error):
-        wine_version_url = "https://phoenicis.playonlinux.com/index.php/wine?os=%s" % self.operating_system
+        wine_version_url = "https://raw.githubusercontent.com/amidevous2/POL-POM-4/refs/heads/master/V4_data/repository/wine%s.json" % self.operating_system
         print("Downloading %s " % wine_version_url)
         try:
             request = urllib.request.Request(wine_version_url, None, {'User-Agent': Variables.userAgent})

@@ -1,0 +1,326 @@
+#!/bin/bash
+# Date : (2020-07-18)
+# Last revision : see the changelog below
+# Wine version used : see the changelog below
+# Distribution used to test : XUbuntu 18.04 64 bits (Linux kernel v5.3), GPU: Intel HD 4400.
+# Author : Dadu042
+# Licence : Retail
+# Only For : http://www.playonlinux.com
+#
+# TESTED Editions: 2020-07-18, in 'Version.txt' there is: Conan_v5.01.0@600096_ConanLiveWin32_2020_06_12-00_29_Rev(600096)
+#
+# Middlewares used by this software : DirectX 9 (d3dx9_41 when installing) and 10, vcrun2010.
+#
+#
+#
+# CHANGELOG
+# [Dadu042] (2020-07-18 20-00)
+#   Initial script.
+# [Dadu042] (2020-07-21 18-00)
+#   Disable Alsa audio driver.
+#
+# KNOWN ISSUES :
+# 
+#
+#
+#
+# KNOWN ISSUES (FIXED):
+#  - Wine amd64 5.0.1, 5.12: and the end of installation 'The Update Manager has encoutered a problem and needs to close...'.
+#          0009:err:d3dcompiler:compile_shader HLSL shader parsing failed.
+#          0009:fixme:dbghelp_dwarf:dwarf2_parse_subprogram Unhandled Tag type 0x1 at ctx(0x31b114,L"d3dx9_41"), for debug_info(abbrev:0x516498c,symt:0x52da9d0)
+#          Note: POL_Install_d3dx9_41 allows a splash screen to appear before the crash.
+#          Tried: vcrun2010, crypt32, winhttp, wininet. Fix : POL_Install_d3dx9_43 + POL_Install_d3dcompiler_43
+#  - Wine x86 5.12: 'Resource can't be decompressed' (log). Tried: xmllite, riched30.
+#   Note: debug log size is smaller after installing vcrun2010.
+#  - Wine amd64 5.0.1, 5.12: once downloaded (28 GB), the game fail to launch (crash) from ConanPatcher.exe
+#    [2020-07-21 13:44:33Z #0] [ID:0] [DistributedValue] LoadFromFile( C:\Program Files\Funcom\Age of Conan\Data\Gui\Default\BundlePrefs.xml ) redefine variable ...
+#    [2020-07-21 13:44:33Z #0] [ID:0] [Patcher/Auth] Launch Path[ C:\Program Files\Funcom\Age of Conan\AgeOfConan.exe]
+#    0035:err:module:import_dll Library DNSAPI.dll (which is needed by L"C:\\Program Files\\Funcom\\Age of Conan\\Awesomium.dll") not found
+#    0035:err:module:import_dll Library Awesomium.dll (which is needed by L"C:\\Program Files\\Funcom\\Age of Conan\\AgeOfConan.exe") not found
+#    0035:err:module:LdrInitializeThunk Importing dlls for L"C:\\Program Files\\Funcom\\Age of Conan\\AgeOfConan.exe" failed, status c0000135
+#    Fix: audio driver Alsa -> Pulse.
+#
+      
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+             
+TITLE="Age of Conan: Unchained"
+PREFIX="Age-of-Conan-Unchained"
+EDITOR="Funcom"
+GAME_URL="https://en.wikipedia.org/wiki/Age_of_Conan"
+AUTHOR="Dadu042"
+STEAM_ID=""
+GAME_VMS="256"
+SHORTCUT_FILENAME="ConanPatcher.exe"
+SOFTWARE_CATEGORIES="Game;RolePlaying;"
+# http://wiki.playonlinux.com/index.php/Scripting_-_Chapter_9:_Standardization#Advanced_Standardization
+DOCUMENT_FILE="manual.pdf"
+            
+# Starting the script
+POL_SetupWindow_Init
+                         
+# Starting debugging API
+POL_Debug_Init
+        
+# Open dialogue box 
+POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$GAME_URL" "$AUTHOR" "$PREFIX"
+      
+# POL_SetupWindow_message "$(eval_gettext 'WARNING: this software does exist in Linux native version.\n\nThis script only allow to run the Windows version on Linux, please prefer the Linux edition for better 3D speed.')" "$TITLE"
+      
+# POL_SetupWindow_message "$(eval_gettext 'This game requires a fast 3D GPU (ie: Intel HD Graphics 4440 is not enough).')" "$TITLE"
+      
+POL_RequiredVersion "4.3.0" || POL_Debug_Fatal "$APPLICATION_TITLE $VERSION is required to install $TITLE"
+      
+# Setting prefix path
+POL_Wine_SelectPrefix "$PREFIX"
+            
+# Determine Architecture
+# POL_System_SetArch "auto"
+# POL_System_SetArch "amd64"
+POL_System_SetArch "x86"
+        
+# Downloading wine if necessary and creating prefix
+POL_Wine_PrefixCreate "5.0.3"
+   
+# POL_System_TmpCreate "$PREFIX"
+             
+Set_OS "win7"
+
+#######################################
+#  Hacks                              #
+#######################################
+
+# cp "$PREFIX/"  dnsapi.dll  DNSAPI.dll
+
+#######################################
+#  Installing mandatory dependencies  #
+#######################################
+
+# POL_Wine_OverrideDLL "builtin,native" "dnsapi"
+
+# For the installer
+POL_Call POL_Install_d3dx9_41
+
+# For the patcher
+POL_Call POL_Install_d3dx9_43
+POL_Call POL_Install_d3dcompiler_43
+
+# Just to get smaller debug logs
+POL_Call POL_Install_vcrun2010
+
+# POL_Call POL_Install_dsound
+# POL_Call POL_Install_directmusic
+# POL_Call POL_Install_mfc42
+# POL_Call POL_Install_quartz
+# POL_Call POL_Install_wininet
+# POL_Call POL_Install_corefonts
+# POL_Call POL_Install_dotnet30sp1
+# POL_Call POL_Install_mono5.20
+# POL_Call POL_Install_dotnet40
+# POL_Call POL_Install_dotnet472
+# POL_Call POL_Install_dsound
+# POL_Call POL_Install_riched30
+# POL_Call POL_Install_corefonts
+# POL_Call POL_Install_d3dx11
+# POL_Call POL_Install_mono210
+                 
+                 
+################
+#      GPU     #
+################
+             
+# Asking about memory size of graphic card
+POL_SetupWindow_VMS $GAME_VMS
+              
+# Set Graphic Card information keys for wine
+POL_Wine_SetVideoDriver
+               
+# Useful for Nvidia GPUs
+# POL_Call POL_Install_physx
+                 
+                 
+#############################################
+#  Sound problem fix - pulseaudio related   #
+#############################################1
+# [ "$POL_OS" = "Linux" ] && Set_SoundDriver "alsa"
+# [ "$POL_OS" = "Linux" ] && Set_SoundEmulDriver "Y"
+## End Fix
+              
+             
+#######################################
+#  Main part of this script           #
+#######################################
+                 
+# Choose between Steam and other Digital Download versions
+# POL_SetupWindow_InstallMethod "STEAM,DVD,LOCAL,DOWNLOAD"
+POL_SetupWindow_InstallMethod "LOCAL,DOWNLOAD"
+      
+POL_SetupWindow_message "Warning: do not install DirectX (nor the icons)." "$TITLE"
+# POL_SetupWindow_message "Warning: do not install Visual C++ 2013 redistribuable\n nor Direct X." "$TITLE"
+# POL_SetupWindow_message "$(eval_gettext 'Note: we recommend you to uncheck all the checkboxes:\n[x] -> [ ]')" "$TITLE"
+
+# Begin game installation
+if [ "$INSTALL_METHOD" == "STEAM" ]; then
+        POL_Call POL_Install_steam
+        # Mandatory pre-install fix for steam
+        POL_Call POL_Install_steam_flags "$STEAM_ID"
+        # Shortcut done before install for steam version
+        POL_Shortcut "steam.exe" "$TITLE" "" "steam://rungameid/$STEAM_ID"
+        # Steam install
+        POL_SetupWindow_message "$(eval_gettext 'When $TITLE download by Steam is finished,\nDo NOT click on Play.\n\nClose COMPLETELY the Steam interface, \nso that the installation script can continue')" "$TITLE"
+        cd "$WINEPREFIX/drive_c/$PROGRAMFILES/Steam"
+        POL_Wine start /unix "steam.exe" steam://install/$STEAM_ID
+        POL_Wine_WaitExit "$TITLE"
+                      
+elif [ "$INSTALL_METHOD" == "DVD" ]; then
+        POL_SetupWindow_cdrom
+                      
+        # POL_Call POL_Function_NoCDWarning
+               
+        POL_SetupWindow_check_cdrom "engine32.cab"
+        POL_Wine start /unix "$CDROM/setup.exe"
+                     
+        POL_Wine_WaitExit "$TITLE"
+                  
+        # Restore screen resolution (game's default is 800x600 ?)
+        # POL_Shortcut_InsertBeforeWine "$SHORTCUT" "trap 'xrandr -s 0' EXIT"
+                     
+        POL_Shortcut "$SHORTCUT_FILENAME" "$TITLE" "" "" "$SOFTWARE_CATEGORIES"
+        POL_Shortcut_QuietDebug "$TITLE"
+        POL_Shortcut_Document "$TITLE" "$DOCUMENT_FILE"
+              
+              
+elif [ "$INSTALL_METHOD" == "DOWNLOAD" ]; then
+        cd "$WINEPREFIX/drive_c"
+             
+        # POL_SetupWindow_message "$(eval_gettext '\n\nNote: this script will download the demo .')" "$TITLE"
+        POL_Download "http://aoc-us-update.live.ageofconan.com/download/AoC/EU/ageofconan-en.exe"
+           
+        mv ageofconan-en.exe GameInstaller.exe
+        # mv Teacher%20Simulator.rar gameinstaller.rar
+        # mv doomrl-win-0997.zip gameinstaller.zip
+           
+        # POL_SetupWindow_wait_next_signal "$(eval_gettext 'Extracting the archive...')" "$TITLE"
+        # POL_System_unrar x "gameinstaller.rar" "$WINEPREFIX/drive_c/game/" || POL_Debug_Fatal "unrar is required to unarchive $TITLE (unrar package is not installed on the OS)."
+        # POL_System_unzip "gameinstaller.zip" -d "$WINEPREFIX/drive_c/game/"
+             
+        # Extract without sub-folder.
+        # unzip "gameinstaller.zip" -j -d "$WINEPREFIX/drive_c/"
+             
+        # POL_SetupWindow_message "$(eval_gettext 'Note: we recommend you to uncheck all the checkboxes:\n[x] -> [ ]')" "$TITLE"
+         
+        # cd  "$WINEPREFIX/drive_c/game/"
+        POL_Wine "GameInstaller.exe" # "/SILENT"
+        POL_Wine_WaitBefore "$TITLE"
+     
+        # POL_SetupWindow_message "$(eval_gettext '\n\nNote: do NOT install DirectX.')" "$TITLE"
+  
+        # cd "$WINEPREFIX/drive_c"
+        # rm GameInstaller.exe
+        # rm GameInstaller.exe
+             
+        POL_Shortcut "$SHORTCUT_FILENAME" "$TITLE" "" "" "$SOFTWARE_CATEGORIES"
+        POL_Shortcut_QuietDebug "$TITLE"
+             
+        # Restore screen resolution (game's default is 1024x768)
+        # POL_Shortcut_InsertBeforeWine "$SHORTCUT" "trap 'xrandr -s 0' EXIT"
+                  
+        POL_Shortcut_Document "$TITLE" "$DOCUMENT_FILE"
+             
+elif [ "$INSTALL_METHOD" == "LOCAL" ]; then
+        # POL_SetupWindow_menu "$(eval_gettext 'What is the type of the file?.')" "$TITLE" "$(eval_gettext '.EXE')~$(eval_gettext '.ZIP')~$(eval_gettext '.RAR')" "~"
+        # POL_SetupWindow_menu "$(eval_gettext 'What is the type of the file?.')" "$TITLE" "$(eval_gettext '.ZIP')~$(eval_gettext '.RAR')" "~"
+        # POL_SetupWindow_menu "$(eval_gettext 'What is the type of the file?.')" "$TITLE" "$(eval_gettext '.MSI')~$(eval_gettext '.EXE')" "~"
+           
+        APP_ANSWER=".EXE"
+     
+if [ "$APP_ANSWER" == ".EXE" ]; then
+        # Asking then installing local files of the game
+        cd "$HOME"
+        POL_SetupWindow_browse "$(eval_gettext 'Please select the installation file (.EXE)')" "$TITLE"
+        SETUP_EXE="$APP_ANSWER"
+   
+        # POL_SetupWindow_message "Note: please answer NO to all the questions that will appear." "$TITLE"
+   
+        POL_Wine start /unix "$SETUP_EXE"
+        POL_Wine_WaitExit "$TITLE"
+                 
+        # Restore screen resolution (game's default is 640x480 ?)
+        # POL_Shortcut_InsertBeforeWine "$SHORTCUT" "trap 'xrandr -s 0' EXIT"
+                   
+        POL_Shortcut "$SHORTCUT_FILENAME" "$TITLE" "" "" "$SOFTWARE_CATEGORIES"
+        POL_Shortcut_QuietDebug "$TITLE"
+  
+        POL_Shortcut_Document "$TITLE" "$DOCUMENT_FILE"
+         
+elif [ "$APP_ANSWER" == "$(eval_gettext '.MSI')" ]; then
+       # Asking then installing local files of the game
+        cd "$HOME"
+        POL_SetupWindow_browse "$(eval_gettext 'Please select the setup file to run')" "$TITLE"
+        SETUP_EXE="$APP_ANSWER"
+        POL_Wine msiexec /i  "$SETUP_EXE"
+        POL_Wine_WaitExit "$TITLE"
+                   
+        # Restore screen resolution (game's default is 640x480 ?)
+        # POL_Shortcut_InsertBeforeWine "$SHORTCUT" "trap 'xrandr -s 0' EXIT"
+                   
+        POL_Shortcut "$SHORTCUT_FILENAME" "$TITLE" "" "" "$SOFTWARE_CATEGORIES"
+        POL_Shortcut_QuietDebug "$TITLE"
+             
+        POL_Shortcut_Document "$TITLE" "$DOCUMENT_FILE"
+      
+elif [ "$APP_ANSWER" == "$(eval_gettext '.ZIP')" ]; then
+        cd "$HOME"
+             
+        # POL_SetupWindow_message "$(eval_gettext '\n\nWARNING: the file name must not have SPACES in its name !.')" "$TITLE"
+        POL_SetupWindow_browse "$(eval_gettext 'Please select the .ZIP file')" "$TITLE"
+        cd "$POL_System_TmpDir"
+        POL_SetupWindow_wait_next_signal "$(eval_gettext 'Extracting the archive...')" "$TITLE"
+        POL_System_unzip "$APP_ANSWER" -d "$WINEPREFIX/drive_c/game/"
+           
+        POL_Shortcut "$SHORTCUT_FILENAME" "$TITLE" "" "" "$SOFTWARE_CATEGORIES"
+             
+        POL_Shortcut_Document "$TITLE" "$DOCUMENT_FILE"
+           
+elif [ "$APP_ANSWER" == "$(eval_gettext '.RAR')" ]; then
+        cd "$HOME"
+        POL_SetupWindow_browse "$(eval_gettext 'Please select the .RAR file')" "$TITLE"
+        SETUP_EXE="$APP_ANSWER"
+        cd "$POL_System_TmpDir"
+        POL_SetupWindow_wait_next_signal "$(eval_gettext 'Extracting the archive...')" "$TITLE"
+        POL_System_unrar x "$APP_ANSWER" "$WINEPREFIX/drive_c/game/" || POL_Debug_Fatal "unrar is required to unarchive $TITLE (unrar package is not installed on the OS)."
+        POL_Shortcut "$SHORTCUT_FILENAME" "$TITLE" "" "" "$SOFTWARE_CATEGORIES"
+            
+        POL_Shortcut_Document "$TITLE" "$DOCUMENT_FILE"
+fi
+fi
+    
+################
+# Patch update #
+################
+   
+# POL_SetupWindow_menu "$(eval_gettext 'Do you have a official patch-update to install ?')" "$TITLE" "$(eval_gettext 'No')~$(eval_gettext 'Yes')" "~"      
+             
+if [ "$APP_ANSWER" == "$(eval_gettext 'Yes')" ]; then
+        POL_SetupWindow_browse "$(eval_gettext 'Please select the .EXE file to run')" "$TITLE"
+        PATCH_EXE="$APP_ANSWER"
+        POL_Wine start /unix "$PATCH_EXE"
+        POL_Wine_WaitExit "$PATCH_EXE"
+fi
+              
+POL_SetupWindow_message "$(eval_gettext 'Installation is finished.')" "$TITLE"
+        
+# POL_SetupWindow_message "$(eval_gettext 'WARNING: to avoid to have a huge log file, you should type \ninto Debug flags : fixme-all')" "$TITLE"
+              
+# Fail ?
+# POL_SetupWindow_message "$LNG_FIN" "$TITLE"
+             
+# POL_System_TmpDelete
+POL_SetupWindow_Close
+exit 0
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRFtWEU2eoWQNaBNczlMfrJqhPKRwUCYAlYcAAKCRDlMfrJqhPK
+R4M8AKCeZ9MuSFtWhVjMzV1qr4+J4wSRGACfRlp1+mJBm4eMkLxk++Qm4hv4gyI=
+=Wo8V
+-----END PGP SIGNATURE-----

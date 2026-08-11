@@ -1,0 +1,76 @@
+cat << EOF > "$POL_USER_ROOT/tmp/register_fonts.reg"
+
+REGEDIT 4
+[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts]
+"Arial"="Arial.TTF"
+"Arial Regular"="Arial.TTF"
+"Arial Bold"="Arialbd.TTF"
+"Arial Bold Italic"="Arialbi.TTF"
+"Arial Italic"="Ariali.TTF"
+"Arial Black"="AriBlk.TTF"
+"Comic Sans MS"="Comic.TTF"
+"Comic Sans MS Bold"="Comicbd.TTF"
+"Courier New"="Cour.TTF"
+"Courier New Bold"="CourBD.TTF"
+"Courier New Bold Italic"="CourBI.TTF"
+"Courier New Italic"="Couri.TTF"
+"Georgia"="Georgia.TTF"
+"Georgia Bold"="Georgiab.TTF"
+"Georgia Bold Italic"="Georgiaz.TTF"
+"Georgia Italic"="Georgiai.TTF"
+"Impact"="Impact.TTF"
+"Times New Roman"="Times.TTF"
+"Times New Roman Bold"="Timesbd.TTF"
+"Times New Roman Bold Italic"="Timesbi.TTF"
+"Times New Roman Italic"="Timesi.TTF"
+"Trebucet MS"="Trebuc.TTF"
+"Trebucet MS Bold"="Trebucbd.TTF"
+"Trebucet MS Bold Italic"="Trebucbi.TTF"
+"Trebucet MS Italic"="Trebucit.TTF"
+"Verdana"="Verdana.TTF"
+"Verdana Bold"="Verdanab.TTF"
+"Verdana Bold Italic"="Verdanaz.TTF"
+"Verdana Italic"="Verdanai.TTF"
+"Webdings"="Webdings.TTF"
+
+[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Fonts]
+"Arial"="Arial.TTF"
+"Arial Regular"="Arial.TTF"
+"Arial Bold"="Arialbd.TTF"
+"Arial Bold Italic"="Arialbi.TTF"
+"Arial Italic"="Ariali.TTF"
+"Arial Black"="AriBlk.TTF"
+"Comic Sans MS"="Comic.TTF"
+"Comic Sans MS Bold"="Comicbd.TTF"
+"Courier New"="Cour.TTF"
+"Courier New Bold"="CourBD.TTF"
+"Courier New Bold Italic"="CourBI.TTF"
+"Courier New Italic"="Couri.TTF"
+"Georgia"="Georgia.TTF"
+"Georgia Bold"="Georgiab.TTF"
+"Georgia Bold Italic"="Georgiaz.TTF"
+"Georgia Italic"="Georgiai.TTF"
+"Impact"="Impact.TTF"
+"Times New Roman"="Times.TTF"
+"Times New Roman Bold"="Timesbd.TTF"
+"Times New Roman Bold Italic"="Timesbi.TTF"
+"Times New Roman Italic"="Timesi.TTF"
+"Trebucet MS"="Trebuc.TTF"
+"Trebucet MS Bold"="Trebucbd.TTF"
+"Trebucet MS Bold Italic"="Trebucbi.TTF"
+"Trebucet MS Italic"="Trebucit.TTF"
+"Verdana"="Verdana.TTF"
+"Verdana Bold"="Verdanab.TTF"
+"Verdana Bold Italic"="Verdanaz.TTF"
+"Verdana Italic"="Verdanai.TTF"
+"Webdings"="Webdings.TTF"
+EOF
+
+POL_Wine regedit "$POL_USER_ROOT/tmp/register_fonts.reg"
+cat << "-----END PGP SIGNATURE-----" > /dev/null
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRFtWEU2eoWQNaBNczlMfrJqhPKRwUCXpymwQAKCRDlMfrJqhPK
+R3I8AKCxkSko7K9mcuaaBmawL518J8uzSQCfcnZ8baCerAfEp9Q5DJNfP7CY3og=
+=L1S2
+-----END PGP SIGNATURE-----

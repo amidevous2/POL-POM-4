@@ -1,0 +1,98 @@
+#!/bin/bash
+# Date : (2018-09-05 04-00)
+# Wine version used : 3.15
+# Author : ulrickno94
+# Licence : GPLv3
+# PlayOnLinux: 4.2.12-2
+# Only For : http://www.playonlinux.com
+# Notes: This script uses latest wine version. For now it is possible to install battle.net and log in. Games not tested.
+
+# Testing system specs:
+
+# ??????????????????  ????????     kudintsev@SilverStone
+# ??????????????????  ????????     OS: Manjaro 17.1.12 Hakoila
+# ??????????????????  ????????     Kernel: x86_64 Linux 4.18.5-1-MANJARO
+# ??????????????????  ????????     Uptime: 2d 16h 34m
+# ????????            ????????     Packages: 1124
+# ????????  ????????  ????????     Shell: bash
+# ????????  ????????  ????????     Resolution: 3200x1119
+# ????????  ????????  ????????     DE: MATE 1.20.1
+# ????????  ????????  ????????     WM: Metacity (Marco)
+# ????????  ????????  ????????     GTK Theme: 'Adapta-Maia' [GTK2/3]
+# ????????  ????????  ????????     Icon Theme: Papirus-Adapta-Maia
+# ????????  ????????  ????????     Font: Sans 10
+# ????????  ????????  ????????     CPU: AMD FX-6300 Six-Core @ 6x 3.5GHz
+# ????????  ????????  ????????     GPU: AMD Radeon (TM) RX 460 Graphics (POLARIS11, DRM 3.26.0, 4.18.5-1-MANJARO, LLVM 6.0.1)
+#                                  RAM: 4166MiB / 15942MiB
+
+ 
+ 
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+ 
+# Setting the variables
+PREFIX="battle.net"
+WINEVERSION=`curl -s "https://source.winehq.org/git/wine.git/tags" | grep -E "wine-[0-9]\.[0-9]" | head -1 | sed 's/<[^>]\+>//g' | sed 's/wine-//g'`
+POL_System_SetArch "amd64"
+TITLE="Battle.Net"
+EDITOR="Blizzard Entertainment Inc."
+GAME_URL="https://www.blizzard.com"
+AUTHOR="ulrickno94"
+
+#Initialization
+POL_GetSetupImages "http://files.playonlinux.com/resources/setups/$PREFIX/top.jpg" "http://files.playonlinux.com/resources/setups/$PREFIX/left.jpg" "$TITLE"
+POL_SetupWindow_Init
+POL_SetupWindow_SetID 2599
+POL_Debug_Init
+ 
+# Presentation
+POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$GAME_URL" "$AUTHOR" "$PREFIX"
+POL_System_TmpCreate "$PREFIX"
+ 
+cd "$POL_System_TmpDir"
+curl -s --output "Battle.net-Setup.exe" 'https://eu.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe'
+ 
+# Create Prefix
+POL_Wine_SelectPrefix "$PREFIX"
+POL_Wine_PrefixCreate "$WINEVERSION"
+ 
+# Configuration
+Set_OS "win10"
+
+# Dependencies
+POL_Call POL_Install_corefonts
+POL_Call POL_Install_dxfullsetup
+
+# DLL's configuration
+POL_Wine_OverrideDLL "native" "d3dx10_43" "d3dx11_43" "d3dx11_42" "d3dx9_36" "d3dx9_42" "d3dx9_43"
+
+# Installation
+POL_SetupWindow_message "$(eval_gettext 'NOTICE: Do not close $TITLE until installation completes and you are at the $TITLE login window. ')" "$TITLE"
+ 
+POL_Wine "$POL_System_TmpDir/Battle.net-Setup.exe"
+POL_Wine_WaitExit "$TITLE"
+ 
+# Create Shortcut
+POL_Shortcut "Battle.net Launcher.exe" "$TITLE"
+ 
+# Cleanup
+POL_System_TmpDelete
+
+# Final note
+POL_SetupWindow_message "$(eval_gettext '$TITLE is installed')" "$TITLE"
+
+# Min memory size to run app  
+POL_SetupWindow_VMS "128"
+
+# Rebooting
+POL_Wine_reboot
+
+# Exiting the  POL window
+POL_SetupWindow_Close
+exit 0
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRFtWEU2eoWQNaBNczlMfrJqhPKRwUCXNUuzQAKCRDlMfrJqhPK
+R+lkAKCpzAm/sD5E7chYGsREGIcGG8tRjQCbB9trel3cadrrlILGK4vW14mfb8I=
+=aKXu
+-----END PGP SIGNATURE-----

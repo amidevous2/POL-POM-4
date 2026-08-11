@@ -33,7 +33,7 @@ if os.environ["POL_OS"] == "Mac":
     os.environ["PLAYONMAC"] = os.environ["PLAYONLINUX"]
     os.environ["POL_USER_ROOT"] = os.environ["HOME"]+"/Library/PlayOnMac/"
     os.environ["APPLICATION_TITLE"] = "PlayOnMac"
-    os.environ["WINE_SITE"] = "https://phoenicis.playonlinux.com/index.php/wine?os=darwin"
+    os.environ["WINE_SITE"] = "https://raw.githubusercontent.com/amidevous2/POL-POM-4/refs/heads/master/V4_data/repository/winedarwin.json"
     os.environ["POL_DNS"] = "playonmac.com"
     windows_add_size = 20
     windows_add_playonmac = 1

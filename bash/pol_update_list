@@ -83,7 +83,7 @@ update_check ()
 	WEB_TIMESTAMP="$($POL_WGET "$SITE/update_mark.txt" -O- 2> /dev/null)"
 	LAST_TIMESTAMP="$(POL_Config_Read LAST_TIMESTAMP)"
 
-	if $POL_WGET "$SITE/V4_data/repository/get_packages.php" -O- > "$POL_USER_ROOT/configurations/POL_Functions"; then
+	if $POL_WGET "https://raw.githubusercontent.com/amidevous2/POL-POM-4/refs/heads/master/V4_data/repository/get_packages.txt" -O- > "$POL_USER_ROOT/configurations/POL_Functions"; then
 		 mv "$POL_USER_ROOT/configurations/POL_Functions" "$POL_USER_ROOT/configurations/listes/POL_Functions"
 		 cat "$POL_USER_ROOT/configurations/listes/POL_Functions" | grep ':1$' | get_packages_icons
 	fi

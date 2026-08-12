@@ -5,7 +5,7 @@
         "packages": [
             {
                 "version": "2.21",
-                "url": "https://web.archive.org/web/20250629203117/http://www.playonlinux.com/wine/binaries/phoenicis/staging-linux-amd64/PlayOnLinux-wine-2.21-staging-linux-amd64.tar.gz",
+                "url": "https://archive.org/download/playonlinuxarchive/PlayOnLinux-wine-2.21-staging-linux-amd64.tar.gz",
                 "sha1sum": "0a6a651caa8ab7ec3c1476755a04787c4dc23cb5",
                 "geckoFile": "wine_gecko-2.40-x86_64.msi",
                 "geckoUrl": "https://archive.org/download/playonlinuxarchive/wine_gecko-2.40-x86_64.msi",

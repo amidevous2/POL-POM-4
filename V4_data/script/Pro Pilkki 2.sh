@@ -1,0 +1,68 @@
+#!/bin/bash
+# Date : (2013-02-26 ??-??)
+# Last revision : see changelog
+# Distribution used to test : Ubuntu 18.04 LTS
+# Author : lahtis
+# Licence : GPLv3
+# Installer for Pro pilkki 2 v1.4.2
+# PlayOnLinux: 4.1.9, 4.2.1, 4.2.9
+ 
+# CHANGELOG
+# [SuperPlumus] (2013-07-24 09-37)
+#   Update gettext messages
+#   Clean code
+#   Fix $PLAYONLINUX check presence
+# [Lahtis] (2019-03-08 15-48)
+#
+# [Dadu042] (2019-11-10)
+#   Add warning about log size.
+
+[ -z "$PLAYONLINUX" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+ 
+TITLE="Pro Pilkki 2"
+PREFIX="ProPilkki2"
+WORKING_WINE_VERSION="3.0"
+EDITOR="Team Procyon"
+GAME_URL="http://www.kalassa.net/propilkki2/index.php?eng=1"
+AUTHOR="lahtis"
+
+  
+POL_GetSetupImages "http://files.playonlinux.com/resources/setups/$PREFIX/top.jpg" "http://files.playonlinux.com/resources/setups/$PREFIX/left.jpg" "$TITLE"
+POL_SetupWindow_Init 
+POL_SetupWindow_SetID 1595
+POL_Debug_Init
+ 
+POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$GAME_URL" "$AUTHOR" "$PREFIX"
+ 
+POL_Wine_SelectPrefix "$PREFIX"
+POL_System_SetArch "x86"
+POL_Wine_PrefixCreate "$WORKING_WINE_VERSION"
+ 
+POL_System_TmpCreate "$PREFIX"
+ 
+Set_OS "win8"
+ 
+cd "$POL_System_TmpDir"
+POL_Download "http://propilkki.ddns.net/propilkki2/download/PP2_download.php?id=0"
+
+mv "PP2_download.php?id=0" "P2Installer_v1.4.2.exe" || POL_Debug_Fatal "$(eval_gettext 'Error rename the file!')"
+ 
+POL_Wine_WaitBefore "$TITLE"
+POL_Wine "$POL_System_TmpDir/P2Installer_v1.4.2.exe"
+POL_Wine_WaitExit "$TITLE"
+ 
+POL_Shortcut 'ProPilkki2.exe' "$TITLE"
+
+POL_SetupWindow_message "$(eval_gettext 'WARNING: to avoid to have huge log file, you should type \ninto Debug flags : fixme-all')" "$TITLE"
+
+POL_System_TmpDelete 
+POL_SetupWindow_Close
+ 
+exit 0
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRFtWEU2eoWQNaBNczlMfrJqhPKRwUCXcf36AAKCRDlMfrJqhPK
+R2bKAJ9nevpGSJaSdwXNZX1BQu7vwBeTRQCfd5E7JdhRzpJwrvu8PUJeVO1Mamk=
+=DGmh
+-----END PGP SIGNATURE-----

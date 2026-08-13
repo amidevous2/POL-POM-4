@@ -1,0 +1,85 @@
+#!/usr/bin/env playonlinux-bash
+# Date : (2013-06-25 20:43)
+# Last revision : (2018-02-11 00-34)
+# Distribution used to test : Ubuntu Mate 16.04
+# Author : lahtis <lahtis@gmail.com>
+# Script licence : GPLv2
+# Original 2 x CD version
+# Bug reports -> https://bugs.winehq.org/show_bug.cgi?id=34836
+# Latest install script -> https://github.com/lahtis/playonlinux/blob/master/working/Jagged Alliance 2/
+   
+[ -z "$PLAYONLINUX" ] && exit
+source "$PLAYONLINUX/lib/sources"
+   
+PREFIX="JaggedAlliance2"
+WORKING_WINE_VERSION="3.1"
+TITLE="Jagged Alliance 2"
+EDITOR="Sir-Tech Software / Strategy First"        
+GAME_URL="http://www.jaggedalliance.com/"
+AUTHOR="lahtis"
+   
+# Initialization
+POL_GetSetupImages "http://files.playonlinux.com/resources/setups/$PREFIX/top.jpg" "http://files.playonlinux.com/resources/setups/$PREFIX/left.jpg" "$TITLE"
+   
+POL_SetupWindow_Init
+POL_SetupWindow_SetID 3107
+POL_Debug_Init
+    
+# Presentation
+POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$GAME_URL" "$AUTHOR" "$PREFIX"
+   
+# Create Prefix
+POL_Wine_SelectPrefix "$PREFIX"
+POL_Wine_PrefixCreate "$WORKING_WINE_VERSION"
+POL_System_TmpCreate "$PREFIX"
+Set_OS win98
+   
+# Asking about memory size of graphic card
+POL_SetupWindow_VMS "32"
+
+# Asking for CDROM and checking if it's correct one
+POL_SetupWindow_message "$(eval_gettext 'Please insert the game media into your disk drive')" "$TITLE"
+POL_SetupWindow_cdrom
+POL_SetupWindow_check_cdrom "Autorun.inf"
+
+POL_Wine_WaitBefore "$TITLE" 
+POL_Wine start /unix "$CDROM/Install/SETUP.EXE" || POL_Debug_Fatal "$(eval_gettext 'Error while installing game.')"
+POL_Wine_WaitExit "$TITLE"
+
+POL_Shortcut "ja2.exe" "$TITLE" "$TITLE.png"
+
+# Download patch JA2-1.07. Game working (only) offical 1.07 patch.
+# 107 patch found in http://kermi.pp.fi/JA_2/Patches/English/ address.
+# this installer is only english version
+# if you use other language version inform me about it, i can make better this script. 
+
+cd "$POL_System_TmpDir"
+
+POL_Download "http://kermi.pp.fi/JA_2/Patches/English/JA2-1.07.zip" 
+POL_Wine_WaitExit "$TITLE"
+
+# unzip file
+unzip "JA2-1.07.zip" || POL_Debug_Error "Unable to extract JA2-1.07.zip"
+
+POL_Wine_WaitBefore "$TITLE" 
+POL_Wine start /unix "JA2_1.07.EXE" || POL_Debug_Fatal "$(eval_gettext 'Error while patching game.')"
+POL_Wine_WaitExit "$TITLE"
+
+   
+# Check Kernel ptrace
+if [ -e "/proc/sys/kernel/yama/ptrace_scope" ]; then
+        PTRACE_CHECK=`cat /proc/sys/kernel/yama/ptrace_scope`
+        if [ "$PTRACE_CHECK" != 0 ]; then
+                POL_Debug_message "$(eval_gettext 'If the game crashes at startup, open a terminal and type:\necho 0|sudo tee /proc/sys/kernel/yama/ptrace_scope')" "$TITLE"
+        fi
+fi
+
+POL_System_TmpDelete
+POL_SetupWindow_Close
+exit 0
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRFtWEU2eoWQNaBNczlMfrJqhPKRwUCXNcXagAKCRDlMfrJqhPK
+R5gXAKCnaBenomXYK/isTB5zy3+v3Lh/CwCgsDOg4/loUsMGT2Ax3VASzkoawXc=
+=k/Cj
+-----END PGP SIGNATURE-----

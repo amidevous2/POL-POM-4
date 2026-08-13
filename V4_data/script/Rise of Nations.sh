@@ -1,0 +1,109 @@
+#!/bin/bash
+# Rise of Nations - Play On Linux script
+# Version: 0.2.0-2
+# Author: ekultails@gmail.com
+# Website: https://github.com/ekultails/playonlinux
+
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+
+# enable debugging
+POL_Debug_Init
+
+# set global variables
+TITLE="Rise of Nations"
+PREFIX="rise_of_nations"
+GAME_PATH="$POL_USER_ROOT/wineprefix/$PREFIX/drive_c/$PROGRAMFILES/Microsoft Games/Rise of Nations"
+
+# start the installation window
+POL_SetupWindow_Init
+POL_SetupWindow_presentation "$TITLE" "Big Huge Games" "http://bighugegames.com" "EkulTails" "$PREFIX"
+
+# tell the user's about compatibility;
+# the Rise of Nations: Extended Edition requires DirectX 10 or 11
+# which Wine does not supprt either very well right now
+POL_SetupWindow_message "$(eval_gettext 'This script is incompatible with the Steam version of Rise of Nations the Extended Edition. All other versions should work.')" "$TITLE"
+
+POL_SetupWindow_browse "$(eval_gettext 'Select the Setup.exe file')" "$TITLE"
+
+# use our unique prefix for installing Wine
+POL_Wine_SelectPrefix "$PREFIX"
+POL_Wine_PrefixCreate "1.8.4"
+
+# install required depedencies in the Wine environment
+# the installer needs mfc42 which first requires vcrun6;
+# it fixes the error:
+# "Cannot load pidgin.dll"
+POL_CALL POL_Install_vcrun6
+POL_Call POL_Install_mfc42
+# these are required for music to play properly
+# (otherwise it plays too fast)
+POL_Call POL_Install_directmusic
+POL_Call POL_Install_dsound
+
+# needed for multiplayer
+POL_Call POL_Install_directplay
+
+# run the RoN installation and wait for it to complete
+POL_Wine --ignore-errors "$APP_ANSWER"
+POL_Wine_WaitExit "$TITLE"
+
+POL_SetupWindow_question "$(eval_gettext 'Are you also installing a seperate Thrones and Partiots expansion CD?')" "$TITLE"
+
+if [[ $APP_ANSWER == "TRUE" ]]; then
+	POL_SetupWindow_browse "Select the Setup.exe file" "$TITLE"
+	POL_Wine --ignore-errors "$APP_ANSWER"
+	POL_Wine_WaitExit "$TITLE"
+fi
+
+# this file needs a few tweaks for RoN to run smoothly
+rise2ini_path="$POL_USER_ROOT/wineprefix/$PREFIX/drive_c/users/$USER/Application Data/Microsoft Games/Rise of Nations"
+rise2ini="$rise2ini_path/rise2.ini"
+
+# create the rise2.ini file if it does not exist already
+if [[ ! -d "$rise2ini_path" ]]; then
+	mkdir -p "$rise2ini_path"
+
+fi
+
+if [[ ! -f $rise2ini ]]; then
+	touch "$rise2ini"
+	rise2ini_created=true
+fi
+
+# delete these entries, if they exist
+sed -i '/ForceGDICursor=/d' "$rise2ini"
+sed -i '/ForceLowCPUBackgroundVid=/d' "$rise2ini"
+sed -i '/SkipIntroMovies=/d' "$rise2ini"
+sed -i '/FullScreen=/d' "$rise2ini"
+
+# create a new settings block if it does not exist
+if [[ "$rise2ini_created" == "true" ]]; then
+    cat <<EOF >> "$rise2ini"
+[RISE OF NATIONS]
+EOF
+fi
+
+# append the necessary setings
+cat <<EOF >> "$rise2ini"
+ForceGDICursor=1
+SkipIntroMovies=1
+ForceLowCPUBackgroundVid=1
+FullScreen=1
+EOF
+
+# create the shortcut and exit
+if [[ -f "$GAME_PATH/patriots.exe" ]]; then
+	POL_Shortcut "patriots.exe" "$TITLE"
+else
+	POL_Shortcut "rise.exe" "$TITLE"	
+fi
+
+POL_SetupWindow_Close
+exit 0
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRFtWEU2eoWQNaBNczlMfrJqhPKRwUCXR0IoQAKCRDlMfrJqhPK
+R0cqAJ936bisQXqZ0G0h224APmxUbH0YRACgmEknOkFcku259LuoBQ29L5ogllk=
+=yJgB
+-----END PGP SIGNATURE-----

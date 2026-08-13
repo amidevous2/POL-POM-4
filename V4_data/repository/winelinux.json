@@ -62,12 +62,12 @@
                 "version": "5.20",
                 "url": "https://archive.org/download/playonlinuxarchive/PlayOnLinux-wine-5.20-staging-linux-amd64.tar.gz",
                 "sha1sum": "e055ebc212abb145aa14725fbcc0415341371019",
-                "geckoFile": null,
-                "geckoUrl": null,
-                "geckoMd5": null,
-                "monoFile": null,
-                "monoUrl": null,
-                "monoMd5": null
+                "geckoFile": "wine-gecko-2.47.4-x86_64.msi",
+                "geckoUrl": "https://archive.org/download/playonlinuxarchive/wine-gecko-2.47.4-x86_64.msi",
+                "geckoMd5": "8cc7018079a8db70e822320b69185515",
+                "monoFile": "wine-mono-5.1.1-x86.msi",
+                "monoUrl": "https://archive.org/download/playonlinuxarchive/wine-mono-5.1.1-x86.msi",
+                "monoMd5": "f441830edbe253912e68c1c113cb46b2"
             },
             {
                 "version": "1.7.7",
@@ -117,12 +117,12 @@
                 "version": "4.10",
                 "url": "https://archive.org/download/playonlinuxarchive/PlayOnLinux-wine-4.10-staging-linux-amd64.tar.gz",
                 "sha1sum": "d67eae29a2563b7cd95d709ac95322547cfc10b2",
-                "geckoFile": null,
-                "geckoUrl": null,
-                "geckoMd5": null,
-                "monoFile": null,
-                "monoUrl": null,
-                "monoMd5": null
+                "geckoFile": "wine-gecko-2.47.4-x86_64.msi",
+                "geckoUrl": "https://archive.org/download/playonlinuxarchive/wine-gecko-2.47.4-x86_64.msi",
+                "geckoMd5": "8cc7018079a8db70e822320b69185515",
+                "monoFile": "wine-mono-4.9.4.msi",
+                "monoUrl": "https://archive.org/download/playonlinuxarchive/wine-mono-4.9.4.msi",
+                "monoMd5": "32cdd96094053bbefe8d3af2290f7e1e"
             },
             {
                 "version": "2.0.4",
